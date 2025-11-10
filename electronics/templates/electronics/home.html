@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сеть по продаже электроники</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .node-factory { border-left: 4px solid #007bff; }
+        .node-retail { border-left: 4px solid #28a745; }
+        .node-entrepreneur { border-left: 4px solid #ffc107; }
+        .hierarchy-level-0 { background-color: #e3f2fd; }
+        .hierarchy-level-1 { background-color: #e8f5e8; }
+        .hierarchy-level-2 { background-color: #fff3cd; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                🏭 Электроника Сеть
+            </a>
+            <div class="navbar-nav">
+                <a class="nav-link" href="{% url 'home' %}">Узлы сети</a>
+                <a class="nav-link" href="{% url 'product_list' %}">Продукты</a>
+                <a class="nav-link" href="{% url 'contact_list' %}">Контакты</a>
+                <a class="nav-link" href="/admin/">Админка</a>
+                <a class="nav-link" href="/swagger/">API Docs</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h1>Сеть по продаже электроники</h1>
+        
+        <!-- Фильтры -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Тип узла</label>
+                        <select name="node_type" class="form-select">
+                            <option value="">Все типы</option>
+                            {% for value, label in node_types %}
+                                <option value="{{ value }}" 
+                                    {% if request.GET.node_type == value %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Страна</label>
+                        <input type="text" name="country" class="form-control" 
+                               value="{{ request.GET.country }}" placeholder="Введите страну...">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Город</label>
+                        <input type="text" name="city" class="form-control" 
+                               value="{{ request.GET.city }}" placeholder="Введите город...">
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary me-2">Фильтровать</button>
+                        <a href="{% url 'home' %}" class="btn btn-secondary">Сбросить</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card text-white bg-primary">
+                    <div class="card-body">
+                        <h4>{{ total_nodes }}</h4>
+                        <p>Всего узлов</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-info">
+                    <div class="card-body">
+                        <h4>{{ nodes|length }}</h4>
+                        <p>Заводов</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-success">
+                    <div class="card-body">
+                        <h4>{{ nodes|length }}</h4>
+                        <p>Розничных сетей</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-warning">
+                    <div class="card-body">
+                        <h4>{{ nodes|length }}</h4>
+                        <p>ИП</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Список узлов -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Узлы сети</h5>
+            </div>
+            <div class="card-body">
+                {% if nodes %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Название</th>
+                                    <th>Тип</th>
+                                    <th>Уровень</th>
+                                    <th>Контакт</th>
+                                    <th>Поставщик</th>
+                                    <th>Задолженность</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for node in nodes %}
+                                <tr class="node-{{ node.node_type }} hierarchy-level-{{ node.hierarchy_level }}">
+                                    <td>
+                                        <strong>{{ node.name }}</strong>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-{% if node.node_type == 'factory' %}primary{% elif node.node_type == 'retail' %}success{% else %}warning{% endif %}">
+                                            {{ node.get_node_type_display }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">Уровень {{ node.hierarchy_level }}</span>
+                                    </td>
+                                    <td>
+                                        <small>
+                                            {{ node.contact.email }}<br>
+                                            {{ node.contact.country }}, {{ node.contact.city }}
+                                        </small>
+                                    </td>
+                                    <td>
+                                        {% if node.supplier %}
+                                            <a href="{% url 'node_detail' node.supplier.id %}" class="text-decoration-none">
+                                                {{ node.supplier.name }}
+                                            </a>
+                                        {% else %}
+                                            <span class="text-muted">—</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if node.debt > 0 %}
+                                            <span class="text-danger">{{ node.debt }} ₽</span>
+                                        {% else %}
+                                            <span class="text-success">0 ₽</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{% url 'node_detail' node.id %}" class="btn btn-outline-primary">
+                                                👁️
+                                            </a>
+                                            <a href="/admin/electronics/networknode/{{ node.id }}/change/" 
+                                               class="btn btn-outline-secondary">
+                                                ✏️
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <p class="text-muted">Узлы сети не найдены</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
