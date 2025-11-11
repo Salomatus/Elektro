@@ -6,7 +6,7 @@ exclude =
     manage.py
     settings.py
     env
-    .venv
+    venv
 
 per-file-ignores =
     ./random_file.py:E501

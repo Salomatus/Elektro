@@ -1,5 +1,5 @@
 from django import forms
-from .models import NetworkNode, Contact, Product, Employee
+from .models import NetworkNode, Contact, Product
 
 
 class ContactForm(forms.ModelForm):

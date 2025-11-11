@@ -355,11 +355,6 @@ class NetworkNodeModelTest(TestCase):
 
     def test_contact_one_to_one_relationship(self):
         """Тест OneToOne связи с контактом"""
-        factory = NetworkNode.objects.create(
-            name='Завод',
-            node_type='factory',
-            contact=self.contact1
-        )
 
         # Проверяем, что контакт уникален
         with self.assertRaises(IntegrityError):
@@ -368,5 +363,3 @@ class NetworkNodeModelTest(TestCase):
                 node_type='factory',
                 contact=self.contact1
             )
-
-
