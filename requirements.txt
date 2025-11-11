@@ -14,3 +14,4 @@ django-celery-beat==2.8.1
 gunicorn
 django-redis
 django-filter==25.2
+decouple==0.0.7
