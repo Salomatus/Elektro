@@ -1,6 +1,5 @@
 from django.test import TestCase
 from django.core.exceptions import ValidationError
-from django.db import IntegrityError
 from decimal import Decimal
 from datetime import date
 
