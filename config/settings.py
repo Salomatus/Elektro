@@ -18,8 +18,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'drf_yasg',
-    'crispy_forms',
-    'crispy_bootstrap5',
     'electronics',
 ]
 
