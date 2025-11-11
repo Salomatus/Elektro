@@ -4,11 +4,12 @@ import  os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = "django-insecure-gpa!m_h(e(2#9j)q*d()*p$0%cm^a(z(#en*e8*ll@j33&%uva"
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
-DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG = int(os.environ.get("DEBUG", default=0))
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=lambda v: [s.strip() for s in v.split(',')])
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
+
 
 INSTALLED_APPS = [
     "django.contrib.admin",
