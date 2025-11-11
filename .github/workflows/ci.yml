@@ -65,8 +65,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Set up SSH
-        uses: webfactory/ssh-agent@v0.8.1
+      - uses: actions/checkout@v2
+      - uses: webfactory/ssh-agent@v0.5.3
         with:
           ssh-private-key: ${{ secrets.SSH_KEY }}
 
