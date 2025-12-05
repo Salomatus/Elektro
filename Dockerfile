@@ -1,16 +1,15 @@
-FROM python:3.10-alpine
+FROM python:3.11
+FROM nginx:latest
 
-# set work directory
-WORKDIR /usr/src/app
+COPY nginx.conf /etc/nginx/nginx.conf
 
-# set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+COPY html/ /usr/share/nginx/html/
 
-# install dependencies
-RUN pip install --upgrade pip
-COPY ./requirements.txt .
+EXPOSE 80
+
+WORKDIR /app
+
+COPY requirements.txt ./
 RUN pip install -r requirements.txt
 
-# copy project
 COPY . .
