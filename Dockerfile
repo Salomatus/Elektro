@@ -1,15 +1,12 @@
-FROM python:3.11
-FROM nginx:latest
+FROM python:3.10-alpine
 
-COPY nginx.conf /etc/nginx/nginx.conf
+# set work directory
+WORKDIR /usr/src/app
 
-COPY html/ /usr/share/nginx/html/
-
-EXPOSE 80
-
-WORKDIR /app
-
-COPY requirements.txt ./
+# install dependencies
+RUN pip install --upgrade pip
+COPY ./requirements.txt .
 RUN pip install -r requirements.txt
 
+# copy project
 COPY . .
