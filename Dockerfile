@@ -1,7 +1,7 @@
-FROM python:3.10-alpine
+FROM python:3.11
 
 # set work directory
-WORKDIR /usr/src/app
+WORKDIR /app
 
 # install dependencies
 RUN pip install --upgrade pip
